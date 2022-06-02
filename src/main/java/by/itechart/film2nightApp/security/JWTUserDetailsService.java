@@ -27,12 +27,12 @@ public class JWTUserDetailsService implements UserDetailsService {
 
         User user = userService.findByUsername(username);
 
-        if(username == null){
+        if (username == null) {
             throw new UsernameNotFoundException("user with username " + username + " not found");
         }
 
         JWTUser jwtUser = JWTUserFactory.create(user);
-        log.info("in loaduserByUserName - user with username {} successfuly loaded",username);
+        log.info("in loaduserByUserName - user with username {} successfuly loaded", username);
         log.info(jwtUser.toString());
 
         return jwtUser;

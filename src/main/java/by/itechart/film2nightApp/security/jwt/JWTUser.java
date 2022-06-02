@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class JWTUser implements UserDetails {
 
-    private final int id;
+    private final Long id;
     private final String username;
     private final String firstName;
     private final String lastName;
@@ -16,7 +16,8 @@ public class JWTUser implements UserDetails {
     private final boolean enabled;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JWTUser(int id, String username, String firstName, String lastName, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities) {
+    public JWTUser(Long id, String username, String firstName, String lastName, String password, boolean enabled,
+                   Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
@@ -66,7 +67,7 @@ public class JWTUser implements UserDetails {
     }
 
     @JsonIgnore
-    public int getId() {
+    public long getId() {
         return id;
     }
 

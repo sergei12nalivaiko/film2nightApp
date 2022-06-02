@@ -15,21 +15,20 @@ public final class JWTUserFactory {
     public JWTUserFactory() {
     }
 
-    public static JWTUser create(User user){
+    public static JWTUser create(User user) {
         return new JWTUser(
                 user.getId(),
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                !Boolean.parseBoolean(user.getIs_blocked()),
-               // true,
+                !user.getIsBlocked(),
                 mapToGrantedAuthorities(new HashSet<>(user.getRoles()))
 
         );
     }
 
-    private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Role> userRoles){
+    private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Role> userRoles) {
         return userRoles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());

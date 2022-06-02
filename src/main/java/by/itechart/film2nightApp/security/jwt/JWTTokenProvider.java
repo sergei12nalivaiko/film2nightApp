@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -24,31 +25,30 @@ import java.util.List;
 @Slf4j
 public class JWTTokenProvider {
 
-    private  static String KEYWORD = "SECRET";
-    private final static long  VALIDITY_IN_MILISECONDS = 360000000;
-
+    private static String KEYWORD = "SECRET";
+    private final static long VALIDITY_IN_MILISECONDS = 360000000;
 
 
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public JWTTokenProvider(@Qualifier("JWTUserDetailsService")@Lazy UserDetailsService userDetailsService) {
+    public JWTTokenProvider(@Qualifier("JWTUserDetailsService") @Lazy UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         KEYWORD = Base64.getEncoder().encodeToString(KEYWORD.getBytes());
     }
 
-    public String createToken(String username, List<Role> role){
+    public String createToken(String username, List<Role> role) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles",getRoleNames(role));
+        claims.put("roles", getRoleNames(role));
 
         Date date = new Date();
         Date validity = new Date(date.getTime() + VALIDITY_IN_MILISECONDS);
@@ -56,38 +56,38 @@ public class JWTTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(date)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256,KEYWORD)
+                .signWith(SignatureAlgorithm.HS256, KEYWORD)
                 .compact();
     }
 
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token){
+    public String getUsername(String token) {
         return Jwts.parser().setSigningKey(KEYWORD).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest request){
+    public String resolveToken(HttpServletRequest request) {
         return request.getHeader("Authorization");
     }
 
-    public boolean validateToken(String token){
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(KEYWORD).parseClaimsJws(token);
-            if(claimsJws.getBody().getExpiration().before(new Date())){
+            if (claimsJws.getBody().getExpiration().before(new Date())) {
                 log.info("validate token - false");
                 return false;
             }
             log.info("validate token - true");
             return true;
-        }catch (JwtException | IllegalArgumentException e){
+        } catch (JwtException | IllegalArgumentException e) {
             throw new JwtException("jwt token is expired or invalid");
         }
     }
 
-    private List<String> getRoleNames(List<Role> userRoles){
+    private List<String> getRoleNames(List<Role> userRoles) {
         List<String> result = new ArrayList<>();
         userRoles.forEach(role -> result.add(role.getName()));
         return result;

@@ -1,23 +1,25 @@
 package by.itechart.film2nightApp.config;
 
-import by.itechart.film2nightApp.security.JWTUserDetailsService;
+
 import by.itechart.film2nightApp.security.jwt.JWTConfigurer;
 import by.itechart.film2nightApp.security.jwt.JWTTokenProvider;
-import by.itechart.film2nightApp.service.UserService;
-import by.itechart.film2nightApp.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
 
 @Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private JWTTokenProvider jwtTokenProvider;
+    private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
     public SecurityConfig(JWTTokenProvider jwtTokenProvider) {
@@ -39,8 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/login").permitAll()
-                .antMatchers("/api/admin").hasRole("admin")
-                .antMatchers("/api/moderator").hasRole("moderator")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JWTConfigurer(jwtTokenProvider));
