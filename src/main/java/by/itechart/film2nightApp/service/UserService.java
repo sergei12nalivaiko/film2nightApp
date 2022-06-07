@@ -3,6 +3,7 @@ package by.itechart.film2nightApp.service;
 import by.itechart.film2nightApp.entity.Role;
 import by.itechart.film2nightApp.entity.User;
 
+import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +26,11 @@ public interface UserService {
 
     User getUserIdFromSecurityContext();
 
-    Map<Object, Object> getActiveUsersForYear(int year);
+    Map<Integer, Integer> getActiveUsersForYear(int year);
 
-    Map<Object, Object> getActiveUsersForMonth(int year, int month);
+    Map<Month, Integer> getActiveUsersForMonth(int year, int month);
 
-    Map<Object, Object> getActiveUsersForWeek(int year, int month, int week);
+    Map<String, Integer> getActiveUsersForWeek(int year, int month, int week);
 
-    Map<Object, Object> getActiveUsersForDay(int year, int month, int day);
+    Map<String, Integer> getActiveUsersForDay(int year, int month, int day);
 }

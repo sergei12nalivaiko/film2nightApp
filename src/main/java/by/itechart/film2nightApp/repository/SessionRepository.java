@@ -13,8 +13,11 @@ import java.util.List;
 
 public interface SessionRepository extends JpaRepository<Session, Long>, JpaSpecificationExecutor<Session> {
 
-    @Query("select s from Session s where s.timeBegin > current_date and s.users.size < s.maxNumberOfGuests and s.isCanceled = false ")
+    @Query("select s from Session s where s.timeBegin > current_date and s.users.size < s.maxNumberOfGuests and s.isCanceled = false and s.creator is not null")
     List<Session> findAvailableSessions(@Param("current_date") Date current_date);
+
+    @Query("select s from Session s where s.creator is not null")
+    List<Session> findAllSessions();
 
     @Query("select s from Session s where s.timeBegin > :yearBefore")
     List<Session> findAllSessionsForYear(@Param("yearBefore") Date yearBefore);
@@ -33,6 +36,13 @@ public interface SessionRepository extends JpaRepository<Session, Long>, JpaSpec
             "join session_scores on session_scores.session_id = session.id\n" +
             "join score on session_scores.scores_id = score.id\n" +
             "group by session.id", nativeQuery = true)
-    List<Object> getSessionAverageScore();
+    List<String> getSessionAverageScore();
+
+    @Query(value = "select session.id, avg(score.score) as average_score\n" +
+            "from session\n" +
+            "join session_scores on session_scores.session_id = session.id\n" +
+            "join score on session_scores.scores_id = score.id where session.time_begin between :begin and :end\n" +
+            "group by session.id order by average_score", nativeQuery = true)
+    List<String> getSessionByRatingScore(@Param("begin") Timestamp begin, @Param("end") Timestamp end);
 
 }

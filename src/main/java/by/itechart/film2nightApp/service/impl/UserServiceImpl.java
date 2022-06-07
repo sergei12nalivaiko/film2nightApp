@@ -96,9 +96,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Object, Object> getActiveUsersForYear(int year) {
+    public Map<Integer, Integer> getActiveUsersForYear(int year) {
 
-        Map<Object, Object> countOfActiveUsers = new TreeMap<>();
+        Map<Integer, Integer> countOfActiveUsers = new TreeMap<>();
         LocalDateTime dateBegin = Year.of(year).atMonth(1).atDay(1).atTime(0, 0, 0);
         LocalDateTime dateEnd = Year.of(year).atMonth(12).atEndOfMonth().atTime(23, 59, 59);
         Timestamp timestampBegin = Timestamp.valueOf(dateBegin);
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Object, Object> getActiveUsersForMonth(int year, int month) {
-        Map<Object, Object> countOfUsersForMonth = new HashMap<>();
+    public Map<Month, Integer> getActiveUsersForMonth(int year, int month) {
+        Map<Month, Integer> countOfUsersForMonth = new HashMap<>();
         Month monthReport = Month.of(month);
         LocalDateTime dateBegin = Year.of(year).atMonth(monthReport).atDay(1).atTime(0, 0, 0);
         LocalDateTime dateEnd = Year.of(year).atMonth(monthReport).atEndOfMonth().atTime(23, 59, 59);
@@ -124,8 +124,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Object, Object> getActiveUsersForWeek(int year, int month, int week) {
-        Map<Object, Object> countOfUsersForWeek = new HashMap<>();
+    public Map<String, Integer> getActiveUsersForWeek(int year, int month, int week) {
+        Map<String, Integer> countOfUsersForWeek = new HashMap<>();
         Month monthReport = Month.of(month);
         LocalDateTime dateBegin = Year.of(year).atMonth(monthReport).atDay(1).atTime(0, 0, 0).plusWeeks(week - 1);
         LocalDateTime dateEnd = Year.of(year).atMonth(monthReport).atDay(1).atTime(0, 0, 0).plusWeeks(week);
@@ -139,8 +139,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Object, Object> getActiveUsersForDay(int year, int month, int day) {
-        Map<Object, Object> countOfUsersForDay = new HashMap<>();
+    public Map<String, Integer> getActiveUsersForDay(int year, int month, int day) {
+        Map<String, Integer> countOfUsersForDay = new HashMap<>();
         Month monthReport = Month.of(month);
         LocalDateTime dateBegin = Year.of(year).atMonth(monthReport).atDay(day).atTime(0, 0, 0);
         LocalDateTime dateEnd = Year.of(year).atMonth(monthReport).atDay(day).atTime(23, 59, 59);
